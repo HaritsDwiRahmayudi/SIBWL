@@ -12,53 +12,50 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Home - redirect to posts
+// == RUTE PUBLIK ==
+// (Bisa diakses siapa saja)
+
+// Home redirect
 Route::redirect('/', '/posts');
 
-// Public route (Index)
+// Tampilkan semua post (index) dan satu post (show)
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
-// -----------------------------------------------------------------
-// PERUBAHAN UTAMA:
-// Semua route yang spesifik dan dilindungi (auth, verified)
-// HARUS diletakkan SEBELUM route wildcard (seperti 'posts/{post}').
-// -----------------------------------------------------------------
+// Tampilkan post berdasarkan kategori
+Route::get('/categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
+
+
+// == RUTE TERPROTEKSI ==
+// (Harus login DAN verifikasi email)
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Protected routes - Posts CRUD
-    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create'); // <-- Sekarang ini dibaca sebelum '/posts/{post}'
+
+    // Rute Dashboard
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Rute Profil (Sekarang sudah 'verified')
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Rute CRUD Posts (Create, Store, Edit, Update, Delete)
+    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
-    // Protected routes - Comments
+    // Rute Komentar
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    
+    // CATATAN: Rute untuk Kategori dan Tag (jika ada CRUD) juga harus masuk ke sini
+    // Contoh: Route::resource('categories', CategoryController::class)->except(['show']);
+    // Contoh: Route::resource('tags', TagController::class);
 });
 
 
-// -----------------------------------------------------------------
-// Route wildcard (seperti /posts/{post}) diletakkan di bawah
-// setelah semua route spesifik '/posts/...' didefinisikan.
-// -----------------------------------------------------------------
-Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
-Route::get('/categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
-
-
-// Profile routes
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-
-// Dashboard route (untuk redirect setelah login/register)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
-// Auth routes
+// Rute Autentikasi Bawaan Breeze
 require __DIR__.'/auth.php';

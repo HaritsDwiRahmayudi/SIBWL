@@ -27,24 +27,37 @@
                            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
                             <i class="fas fa-plus"></i> Create Post
                         </a>
+                        
+                        {{-- PERBAIKAN DROPDOWN DIMULAI DI SINI --}}
                         <div class="relative group">
-                            <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                            {{-- Tombol Trigger --}}
+                            <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-2 py-4">
                                 <i class="fas fa-user-circle text-2xl"></i>
                                 <span>{{ auth()->user()->name }}</span>
                                 <i class="fas fa-chevron-down text-xs"></i>
                             </button>
-                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block">
-                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-user"></i> Profile
-                                </a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
-                                        <i class="fas fa-sign-out-alt"></i> Logout
-                                    </button>
-                                </form>
+                            
+                            {{-- 
+                                Kontainer Dropdown (Wrapper Tak Terlihat)
+                                - 'top-full' menempatkannya di bawah parent.
+                                - 'pt-2' (padding-top) menciptakan celah visual, TAPI area hover tetap aktif.
+                            --}}
+                            <div class="absolute right-0 top-full w-48 hidden group-hover:block pt-2 z-50">
+                                {{-- Menu Dropdown yang Terlihat --}}
+                                <div class="bg-white rounded-lg shadow-lg py-2 ring-1 ring-black ring-opacity-5">
+                                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-user w-5 mr-1"></i> Profile
+                                    </a>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
+                                            <i class="fas fa-sign-out-alt w-5 mr-1"></i> Logout
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
+                         {{-- PERBAIKAN DROPDOWN SELESAI --}}
                     @else
                         <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900">
                             <i class="fas fa-sign-in-alt"></i> Login
