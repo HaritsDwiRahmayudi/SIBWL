@@ -16,16 +16,21 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::with(['user', 'category', 'tags'])
-            ->published()
-            ->search(request('search'))
-            ->byCategory(request('category'))
-            ->byTag(request('tag'))
-            ->latest('published_at')
-            ->paginate(12)
-            ->withQueryString();
+     $posts = Post::with(['user', 'category', 'tags'])
+        ->published()
+        ->search(request('search'))
+        ->byCategory(request('category'))
+        ->byTag(request('tag'))
+        // ------------------------------------------------
+        // TAMBAHKAN BARIS INI UNTUK MEMASTIKAN
+        // ------------------------------------------------
+        ->whereNull('posts.deleted_at') 
+        // ------------------------------------------------
+        ->latest('published_at')
+        ->paginate(12)
+        ->withQueryString();
 
-        $categories = Category::withCount('posts')->get();
+    $categories = Category::withCount('posts')->get();
        $sidebarTags = Tag::withCount('posts')->get();
 
         return view('posts.index', compact('posts', 'categories', 'sidebarTags'));
