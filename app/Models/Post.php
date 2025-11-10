@@ -24,13 +24,13 @@ class Post extends Model
         'published_at' => 'datetime',
     ];
 
-    // Route model binding menggunakan slug
+   
     public function getRouteKeyName(): string
     {
         return 'slug';
     }
 
-    // Relationships
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

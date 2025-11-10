@@ -18,11 +18,7 @@ Route::redirect('/', '/posts');
 // Public route (Index)
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 
-// -----------------------------------------------------------------
-// PERUBAHAN UTAMA:
-// Semua route yang spesifik dan dilindungi (auth, verified)
-// HARUS diletakkan SEBELUM route wildcard (seperti 'posts/{post}').
-// -----------------------------------------------------------------
+
 Route::middleware(['auth', 'verified'])->group(function () {
     
     // Protected routes - Posts CRUD
@@ -38,10 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-// -----------------------------------------------------------------
-// Route wildcard (seperti /posts/{post}) diletakkan di bawah
-// setelah semua route spesifik '/posts/...' didefinisikan.
-// -----------------------------------------------------------------
+
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 Route::get('/categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
 

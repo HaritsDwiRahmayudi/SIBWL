@@ -21,9 +21,7 @@ class PostController extends Controller
         ->search(request('search'))
         ->byCategory(request('category'))
         ->byTag(request('tag'))
-        // ------------------------------------------------
-        // TAMBAHKAN BARIS INI UNTUK MEMASTIKAN
-        // ------------------------------------------------
+     
         ->whereNull('posts.deleted_at') 
         // ------------------------------------------------
         ->latest('published_at')
@@ -123,7 +121,7 @@ class PostController extends Controller
         $post->update($data);
 
         // Sync tags
-        $post->tags()->sync($request->tags ?? []); // <-- Gunakan ini
+        $post->tags()->sync($request->tags ?? []); 
 
     return redirect()
         ->route('posts.show', $post)
